@@ -253,7 +253,7 @@ class Frontpage {
             ';
 
         /* jQuery in noConflict mode */
-        if ($this->config['noconflictjq'] == true) {
+        if ($this->config['jQueryNoConflict'] == true) {
 
             $head .= '
                 var $j = jQuery.noConflict();
