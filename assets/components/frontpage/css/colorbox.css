@@ -22,9 +22,10 @@
 #colorbox{}
     #cboxTopLeft{width:21px; height:21px; background:url(images/controls.png) -100px 0 no-repeat;}   
     #cboxBottomLeft{width:21px; height:21px; background:url(images/controls.png) -100px -29px no-repeat;}
+    #cboxTopRight{width:21px; height:21px; background:url(images/controls.png) -129px 0 no-repeat;}
     #cboxBottomRight{width:21px; height:21px; background:url(images/controls.png) -129px -29px no-repeat;}
     #cboxMiddleLeft{width:21px; background:url(images/controls.png) left top repeat-y;}
-    #cboxMiddleRight{width:21px; }
+    #cboxMiddleRight{width:21px; background:url(images/controls.png) right top repeat-y;}
     #cboxTopCenter{height:21px; background:url(images/border.png) 0 0 repeat-x;}
     #cboxBottomCenter{height:21px; background:url(images/border.png) 0 -29px repeat-x;}
     #cboxContent{background:#fff;}
