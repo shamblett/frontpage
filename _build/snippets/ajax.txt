@@ -1,11 +1,12 @@
 <?php
 /**
- * Frontpage Editor Create snippet
+ * Frontpage Editor AJAX snippet
  *
  * @author    S. Hamblett <steve.hamblett@linux.com>
- * @copyright 2010 S. Hamblett
+ * @copyright 2011 S. Hamblett
  * @license   GPLv3 http://www.gnu.org/licenses/gpl.html
  */
+
 
 
 /* Create a Frontpage class */
@@ -17,16 +18,4 @@ $fp->initialize($scriptProperties);
 /* Exit if we have not been invoked from frontpage itself */
 if ( $_REQUEST['frontpage'] != 1 ) return;
 
-/* Get the parameters */
-$source = $_REQUEST['source'];
-$parent = $_REQUEST['parent'];
-
-
-/* Select the correct method*/
-if ( isset($_POST['save'])) {
-   $fp->saveCreatePage($source);
-} else {
-   $fp->createPage($source, $parent);
-}
-
-return;
+return $fp->ajaxCreateRedirect();

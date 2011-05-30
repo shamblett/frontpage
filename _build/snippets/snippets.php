@@ -19,3 +19,9 @@ $s->set('description', 'Frontpage create resource control snippet');
 $s->set('snippet', file_get_contents($sources['snippets'] . 'create.txt'));
 $snippets[] = $s;
 
+$s = $modx->newObject('modSnippet');
+$s->set('name', 'frontpageAJAX');
+$s->set('description', 'Frontpage AJAX resource control snippet');
+$s->set('snippet', file_get_contents($sources['snippets'] . 'ajax.txt'));
+$snippets[] = $s;
+

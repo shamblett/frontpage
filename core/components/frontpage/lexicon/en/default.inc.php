@@ -30,4 +30,5 @@ $_lang['hidemenulabel'] = 'Hide From Menus';
 $_lang['publishlabel'] = 'Publish';
 $_lang['folderlabel'] = 'Folder';
 $_lang['savebuttonlabel'] = 'Save';
+$_lang['cancelbuttonlabel'] = 'Complete';
 

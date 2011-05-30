@@ -41,7 +41,7 @@ $modx->setLogLevel(modX::LOG_LEVEL_INFO);
 $modx->setLogTarget('ECHO');
 
 $name = 'frontpage';
-$version = '1.0';
+$version = '1.1.0';
 $release = 'beta';
 
 $modx->loadClass('transport.modPackageBuilder','',false, true);
@@ -67,6 +67,7 @@ $attr = array(
             xPDOTransport::PRESERVE_KEYS => false,
             xPDOTransport::UPDATE_OBJECT => true,
             xPDOTransport::UNIQUE_KEY => 'name'),
+            xPDOTransport::RELATED_OBJECTS => true,
             xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array (
                 'modPluginEvent' => array(
                 xPDOTransport::PRESERVE_KEYS => true,
@@ -122,7 +123,7 @@ foreach ($settings as $setting ) {
 /* Resources */
 $attr = array(
     xPDOTransport::UNIQUE_KEY => 'pagetitle',
-    xPDOTransport::PRESERVE_KEYS => true,
+    xPDOTransport::PRESERVE_KEYS => false,
     xPDOTransport::UPDATE_OBJECT => true);
 
 include_once($sources['resources'] . 'resources.php');
@@ -150,9 +151,6 @@ $vehicle->resolve('file', array(
 foreach ( $vehicles as $vehicle ) {
 	$builder->putVehicle($vehicle);
 }
-
-/* Lexicon */
-$builder->buildLexicon($sources['lexicon']);
 
 /* now pack in the license file, readme and setup options */
 $builder->setPackageAttributes(array(

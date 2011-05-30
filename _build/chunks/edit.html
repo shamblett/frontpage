@@ -1,6 +1,7 @@
 <div id="editForm" >
  <form action="[[~[[*id]]]]" method="post" name="frontpage" id="frontpage">
     <input type="hidden" name="source" id="source" value="[[+fp.source]]" />
+    <input type="hidden" name="frontpage" id="frontpage" value="1" />
     <p class="label_field_pair">
     <label for="title">[[+fp.titlelabel]]</label>
     <input type="text" name="title" id="title" value="[[+fp.title]]" class="text" maxlength="30" size="30"/></br>
@@ -48,7 +49,8 @@
 	<a href="javascript:;" onmousedown="$('#formcontent').tinymce().execCommand('mceInsertContent',false,'<b>Hello world!!</b>');">[Insert HTML]</a>
 	<a href="javascript:;" onmousedown="$('#formcontent').tinymce().execCommand('mceReplaceContent',false,'<b>{$selection}</b>');">[Replace selection]</a>
 <br/><br/><a href="javascript:toggleEditor('formcontent');">Add/Remove editor</a>
-<br/><br/><input type="submit" name="save" value="[[+fp.savebuttonlabel]]" class="buttons" />
+<br/><br/><input type="submit" name="save" value="[[+fp.savebuttonlabel]]" class="buttons" title="[[+fp.savebuttonlabel]]" />
+<input  onClick="parent.$('a.colorbox').colorbox.close();return false;" type="reset" value="[[+fp.cancelbuttonlabel]]" name="cancel" class="buttons" title="[[+fp.cancelbuttonlabel]]" />
     <p>[[+fp.error_message]]</p>
  </form>
 </div>

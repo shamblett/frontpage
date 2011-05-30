@@ -92,7 +92,7 @@ class Frontpage {
         $allowAccess = false;
 
         /* Get the current document identifier */
-        $docId = $this->modx->documentIdentifier;
+        $docId = $this->modx->resource->get('id');
 
         /* Don't do any processing if we are on the Create or Edit page */
         $editResource = $this->modx->getObject('modSystemSetting',
@@ -106,11 +106,11 @@ class Frontpage {
                                                      'namespace' => 'frontpage'));
         if ( !$createResource ) return;
         $createPage = $createResource->get('value');
-
+        
         if ( ($editPage == $docId) || ($createPage == $docId)) return;
         
         /* Get the document output */
-        $output = &$this->modx->documentOutput;
+        $output = &$this->modx->resource->_output;
 
         /* Get the user id and the current document parent */
         $userId = $_SESSION['webInternalKey'];       
@@ -163,7 +163,7 @@ class Frontpage {
                 $editText = $this->modx->lexicon('editbutton');
                 $editButton = '
                     <li>
-                    <a class="fpButton fpEdit colorbox" href="' . $editURL . '&amp;frontpage=1&amp;source=' . $docId . '"><span> ' . $editText . '</span></a>
+                    <a onClick="javascript:FrontPage.edit=1;return false;" class="fpButton fpEdit colorbox" href="' . $editURL . '&amp;frontpage=1&amp;source=' . $docId . '"><span> ' . $editText . '</span></a>
                     </li>
                     ';
                 $controls .= $editButton;
@@ -180,7 +180,7 @@ class Frontpage {
                 $createText = $this->modx->lexicon('createbutton');
                 $createButton = '
                     <li>
-                    <a class="fpButton colorbox" href="' . $createURL . '&amp;frontpage=1&amp;source=' . $docId . '&amp;parent=' . $parentId . '"><span> ' . $createText . '</span></a>
+                    <a onClick="javascript: FrontPage.create=1;return false;" class="fpButton fpCreate colorbox" href="' . $createURL . '&amp;frontpage=1&amp;source=' . $docId . '&amp;parent=' . $parentId . '"><span> ' . $createText . '</span></a>
                     </li>
                     ';
                 $controls .= $createButton;
@@ -196,7 +196,7 @@ class Frontpage {
         $editor = '
             <div id="fpEditorClosed"></div>
             <div id="fpEditor">
-            <a id="fpClose" class="fpButton fpClose" href="#" onclick="javascript: return false;">X</a>
+            <a id="fpClose" class="fpButton fpClose" href="#" onclick="javascript: return false;">Close Me</a>
             <ul>
             <li><a id="fpLogoClose" class="fpClose" href="#" onclick="javascript: return false;"></a></li>
             ' . $controls . '
@@ -252,6 +252,16 @@ class Frontpage {
             <script type="text/javascript">
             ';
 
+        /* Add Frontpage control */
+        $head .= '
+            // Frontpage Control
+            var FrontPage = new Object();
+            FrontPage.source = ' . $docId  . ';
+            FrontPage.create = 0;
+            FrontPage.edit = 0;
+            
+            ';
+        
         /* jQuery in noConflict mode */
         if ($this->config['jQueryNoConflict'] == true) {
 
@@ -268,10 +278,40 @@ class Frontpage {
 
         }
 
+        /* Get the create AJAX URL */
+        $ajaxURL = $this->_createAjaxLink();
+        
         /* Finish the header information */
         $head .= '
             {
-                $("a.colorbox").colorbox({width:"' . $this->config['boxWidth'] .'", height:"' . $this->config['boxHeight'] . '", iframe:true, overlayClose:false});
+                $("a.colorbox").colorbox({width:"' . 
+                $this->config['boxWidth'] . '", height:"' . 
+                $this->config['boxHeight'] . '", 
+                    iframe:true, 
+                    overlayClose:true, 
+                    close:"I\'ve finished",
+                    transition:"elastic",
+                    onClosed:function(){
+                        if ( FrontPage.edit == 1 ) {
+                            window.location.reload();
+                        }
+                        if ( FrontPage.create == 1 ) {
+                            $.ajax({url: "' . $ajaxURL .'",
+                                    async: false,
+                                    dataType: "text",
+                                    success: function(data){
+                                      data = decodeURI(data); 
+                                      window.location = data;
+                                    },
+                                    error: function(a,b,c){
+                                        var wearehere = 0;
+                                    }
+                              });
+                        }
+                                        
+                     }
+                    });
+                        
                 // Bindings
                 $().bind("cbox_open", function(){
                     $("body").css({"overflow":"hidden"});
@@ -330,7 +370,7 @@ class Frontpage {
     function checkTags() {
 
         /* Get the document output */
-        $output = &$this->modx->documentOutput;
+        $output = &$this->modx->resource->_output;
         
         /* Get the Edit page resource */
         $editResource = $this->modx->getObject('modSystemSetting',
@@ -340,7 +380,7 @@ class Frontpage {
         if ( !$editResource ) return $output;
               
         /* If we are on our edit page, close up the tags */
-         $docId = $this->modx->documentIdentifier;
+         $docId = $this->modx->resource->get('id');
          $editPage = $editResource->get('value');
          if ( $docId == $editPage ) $output = str_replace('[ [', '[[', $output); 
          
@@ -350,7 +390,7 @@ class Frontpage {
     
     /**
      * Edit button resource link function
-     *
+     * 
      * @access private
      *
      * @return the editor button link
@@ -385,4 +425,424 @@ class Frontpage {
          return $url;
 
      }
+     
+     /**
+     * Create ajax resource link function
+     *
+     * @access private
+     *
+     * @return the create ajax link url
+     */
+     function _createAjaxLink() {
+
+         $ajaxResourceSetting = $this->modx->getObject('modSystemSetting',
+                                                         array('key' => 'ajax_resource',
+                                                         'namespace' => 'frontpage'));
+
+         $ajaxId = $ajaxResourceSetting->get('value');
+         $params = array ('frontpage' => '1');
+                          
+         $url = $this->modx->makeURL($ajaxId, "", $params);
+         $url = html_entity_decode($url);
+         return $url;
+
+     }
+     
+     /**
+     * Edit page function
+     *
+     * @param $source the page id we are editing
+     * 
+     * @access public
+     *
+     */
+    function editPage($source) {
+        
+        /* Get the document details */
+        $sourceDoc = $this->modx->getObject('modResource',
+                                      array('id' => $source));
+
+        if ( !$sourceDoc) {
+
+           $this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('nosuchdocument'));
+           return;
+
+        }
+
+        /* Set the place holders */
+        $this->modx->setPlaceholder('fp.source', $source);
+        $this->modx->setPlaceholder('fp.titlelabel', $this->modx->lexicon('titlelabel'));
+        $this->modx->setPlaceholder('fp.title', $sourceDoc->get('pagetitle'));
+        $this->modx->setPlaceholder('fp.longtitlelabel', $this->modx->lexicon('longtitlelabel'));
+        $this->modx->setPlaceholder('fp.longtitle', $sourceDoc->get('longtitle'));
+        $this->modx->setPlaceholder('fp.descriptionlabel', $this->modx->lexicon('descriptionlabel'));
+        $this->modx->setPlaceholder('fp.description', $sourceDoc->get('description'));
+        $this->modx->setPlaceholder('fp.aliaslabel', $this->modx->lexicon('aliaslabel'));
+        $this->modx->setPlaceholder('fp.alias', $sourceDoc->get('alias'));
+        $this->modx->setPlaceholder('fp.summarylabel', $this->modx->lexicon('summarylabel'));
+        $this->modx->setPlaceholder('fp.summary', $sourceDoc->get('introtext'));
+        $this->modx->setPlaceholder('fp.menutitlelabel', $this->modx->lexicon('menutitlelabel'));
+        $this->modx->setPlaceholder('fp.menutitle', $sourceDoc->get('menutitle'));
+        $this->modx->setPlaceholder('fp.menuindexlabel', $this->modx->lexicon('menuindexlabel'));
+        $this->modx->setPlaceholder('fp.menuindex', $sourceDoc->get('menuindex'));
+        $this->modx->setPlaceholder('fp.hidemenulabel', $this->modx->lexicon('hidemenulabel'));
+        if ( $sourceDoc->get('hidemenu') == 1 ) $this->modx->setPlaceholder('fp.hidemenuscheck', "checked");
+        $this->modx->setPlaceholder('fp.publishlabel', $this->modx->lexicon('publishlabel'));
+        if ( $sourceDoc->get('published') == 1 ) $this->modx->setPlaceholder('fp.publishcheck', "checked");
+        $this->modx->setPlaceholder('fp.savebuttonlabel', $this->modx->lexicon('savebuttonlabel'));
+        $this->modx->setPlaceholder('fp.cancelbuttonlabel', $this->modx->lexicon('cancelbuttonlabel'));
+
+        /* Content with tags opened */
+        $content = str_replace('[[', '[ [', $sourceDoc->get('content'));
+        $this->modx->setPlaceholder('fp.formcontent', $content);
+
+        return;
+        
+    }
+    
+    /**
+     * Create page function
+     *
+     * @param $source the page id we are editing
+     * @param $parent the parent of the page id we are editing
+     * 
+     * @access public
+     *
+     */
+    function createPage($source, $parent) {
+        
+        /* If parent is not -1 this is a create, otherwise a refresh from save */
+        if ( $parent != -1 ) {
+
+        /* Create a document */
+        $newDoc = $this->modx->newObject('modResource');
+
+        if ( !$newDoc ) {
+
+           $this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('cantcreate'));
+           return;
+        }
+
+        /* Get the parent document template */
+        $templateToUse = 0;
+
+        if ( $parent != 0 ) {
+
+        $parentDoc = $this->modx->getObject('modResource', array('id' => $parent));
+        if ( !$parentDoc ) {
+
+           $this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('cantgetparent'));
+           return;
+        }
+
+        $templateToUse = $parentDoc->get('template');
+
+        }
+
+        /* Set default document parameters from the parent */
+        if ( $parent != 0 ) {
+
+          $newDoc->set('context_key', $parentDoc->get('context_key'));
+          $newDoc->set('richtext', $parentDoc->get('richtext'));
+
+        } else {
+
+           $newDoc->set('context_key', 'web');
+
+        }
+
+        /* Get the kind of template we are using */
+        $templateSetting = $this->modx->getObject('modSystemSetting',
+                                            array('key' => 'default_template',
+                                            'namespace' => 'frontpage'));
+        if ( !$templateSetting ) {
+
+            $newDoc->set('template', $templateToUse);
+
+        } else {
+
+           $template = $templateSetting->get('value');
+           if ( $template == 'parent' ) {
+
+               $newDoc->set('template', $templateToUse);
+
+            } else {
+
+               $newDoc->set('template', $template);
+            }
+
+        }
+
+        /* Parent */
+        $newDoc->set('parent', $parent);
+
+        /* Save the new document */
+        $success = $newDoc->save();
+        if ( $success === false ) {
+
+           $this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('cantsave'));
+           return;
+        }
+        
+        /* Resource groups */
+        if ( $parent != 0 ) {
+
+        $parentResourceGroups = $this->modx->getCollection('modResourceGroupResource',
+                                array('document' => $parent));
+
+        foreach ( $parentResourceGroups as $parentResourceGroup ) {
+
+             $resourceGroup = $parentResourceGroup->get('document_group');
+             $newResourceGroup = $this->modx->newObject('modResourceGroupResource',
+                                                   array('document' => $newDoc->get('id'),
+                                                         'document_group' => $resourceGroup));
+             $newResourceGroup->save();
+        }
+
+        }
+
+        /* Set the source document to the new one */
+        $source = $newDoc->get('id');
+        $sourceDoc = $newDoc;
+        
+        /* Set the newly created document as a session variable */
+        $_SESSION['fp_newCreate'] = $source;
+        
+
+        } else {
+
+        $sourceDoc = $this->modx->getObject('modResource',
+                                      array('id' => $source));
+        if ( !$sourceDoc ) {
+
+           $this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('nosuchdocument'));
+           return;
+        }
+
+        } // Create or refresh
+
+        /* Set the place holders */
+        $this->modx->setPlaceholder('fp.source', $source);
+        $this->modx->setPlaceholder('fp.titlelabel', $this->modx->lexicon('titlelabel'));
+        $this->modx->setPlaceholder('fp.title', $sourceDoc->get('pagetitle'));
+        $this->modx->setPlaceholder('fp.longtitlelabel', $this->modx->lexicon('longtitlelabel'));
+        $this->modx->setPlaceholder('fp.longtitle', $sourceDoc->get('longtitle'));
+        $this->modx->setPlaceholder('fp.descriptionlabel', $this->modx->lexicon('descriptionlabel'));
+        $this->modx->setPlaceholder('fp.description', $sourceDoc->get('description'));
+        $this->modx->setPlaceholder('fp.aliaslabel', $this->modx->lexicon('aliaslabel'));
+        $this->modx->setPlaceholder('fp.alias', $sourceDoc->get('alias'));
+        $this->modx->setPlaceholder('fp.summarylabel', $this->modx->lexicon('summarylabel'));
+        $this->modx->setPlaceholder('fp.summary', $sourceDoc->get('introtext'));
+        $this->modx->setPlaceholder('fp.menutitlelabel', $this->modx->lexicon('menutitlelabel'));
+        $this->modx->setPlaceholder('fp.menutitle', $sourceDoc->get('menutitle'));
+        $this->modx->setPlaceholder('fp.menuindexlabel', $this->modx->lexicon('menuindexlabel'));
+        $this->modx->setPlaceholder('fp.menuindex', $sourceDoc->get('menuindex'));
+        $this->modx->setPlaceholder('fp.hidemenulabel', $this->modx->lexicon('hidemenulabel'));
+        if ( $sourceDoc->get('hidemenu') == 1 ) $this->modx->setPlaceholder('fp.hidemenuscheck', "checked");
+        $this->modx->setPlaceholder('fp.publishlabel', $this->modx->lexicon('publishlabel'));
+        if ( $sourceDoc->get('published') == 1 ) $this->modx->setPlaceholder('fp.publishcheck', "checked");
+        $this->modx->setPlaceholder('fp.folderlabel', $this->modx->lexicon('folderlabel'));
+        if ( $sourceDoc->get('isfolder') == 1 ) $this->modx->setPlaceholder('fp.foldercheck', "checked");
+        $this->modx->setPlaceholder('fp.savebuttonlabel', $this->modx->lexicon('savebuttonlabel'));
+        $this->modx->setPlaceholder('fp.cancelbuttonlabel', $this->modx->lexicon('cancelbuttonlabel'));
+
+        /* Content with tags opened */
+        $content = str_replace('[[', '[ [', $sourceDoc->get('content'));
+        $this->modx->setPlaceholder('fp.formcontent', $content);
+    
+    }
+    
+    /**
+     * Save Edit page function
+     *
+     * @param $source the page id we are editing
+     * 
+     * @access public
+     *
+     */
+    function saveEditPage($source) {
+        
+        $docId = $this->modx->resource->get('id');
+
+        /* Save the document fields */
+        $sourceDoc = $this->modx->getObject('modResource',
+                                      array('id' => $source));
+        if ( !$sourceDoc ) {
+
+           $this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('nosuchdocument'));
+           return;
+        }
+
+        $sourceDoc->set('pagetitle', $_POST['title']);
+        $sourceDoc->set('longtitle', $_POST['longtitle']);
+        $sourceDoc->set('description', $_POST['description']);
+        $sourceDoc->set('alias', $_POST['alias']);
+        $sourceDoc->set('introtext', $_POST['summary']);
+        $sourceDoc->set('menutitle', $_POST['menutitle']);
+        $sourceDoc->set('menuindex', $_POST['menuindex']);
+        $hidemenu = 0;
+        if ( isset($_POST['hidemenus']) ) $hidemenu = 1;
+        $sourceDoc->set('hidemenu', $hidemenu);
+        
+        /* Publish dates */
+        if ( isset($_POST['publish'])) {
+            
+            $sourceDoc->set('published', 1);
+            $now = time();
+            $sourceDoc->set('publishedon', $now);
+            $user = $this->modx->user->get('id');
+            $sourceDoc->set('publishedby', $user);
+            
+        } else {
+            
+            $sourceDoc->set('published', 0);
+            
+        }
+        
+        /* Content with tags closed up again */
+        $content = str_replace('[ [', '[[', $_POST['formcontent']);
+        $sourceDoc->set('content', $content);
+
+        /* Save it */
+        $success = $sourceDoc->save();
+        if ( $success === false ) {
+           $this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('cantsave'));
+           return;
+        }
+
+        /* Clear the cache */
+        $this->_clearCache($sourceDoc);
+        
+        /* Redirect to ourselves to redraw the page */
+        $params = array( 'frontpage'=> '1',
+                         'source' => $source);
+        $url = $this->modx->makeURL($docId, "", $params);
+        $this->modx->sendRedirect($url);
+
+        
+    }
+    
+    /**
+     * Save Create page function
+     *
+     * @param $source the page id we are editing
+     * 
+     * @access public
+     *
+     */
+    function saveCreatePage($source) {
+        
+        $docId = $this->modx->resource->get('id');
+
+        /* Ok, save the document fields */
+        $sourceDoc = $this->modx->getObject('modResource',
+                                      array('id' => $source));
+        if ( !$sourceDoc ) {
+
+           $this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('nosuchdocument'));
+           return;
+        }
+
+        $sourceDoc->set('pagetitle', $_POST['title']);
+        $sourceDoc->set('longtitle', $_POST['longtitle']);
+        $sourceDoc->set('description', $_POST['description']);
+        $sourceDoc->set('alias', $_POST['alias']);
+        $sourceDoc->set('introtext', $_POST['summary']);
+        $sourceDoc->set('menutitle', $_POST['menutitle']);
+        $sourceDoc->set('menuindex', $_POST['menuindex']);
+        $hidemenu = 0;
+        if ( isset($_POST['hidemenus']) ) $hidemenu = 1;
+        $sourceDoc->set('hidemenu', $hidemenu);
+        /* Publish dates */
+        if ( isset($_POST['publish'])) {
+            
+            $sourceDoc->set('published', 1);
+            $now = time();
+            $sourceDoc->set('publishedon', $now);
+            $user = $this->modx->user->get('id');
+            $sourceDoc->set('publishedby', $user);
+            
+        } else {
+            
+            $sourceDoc->set('published', 0);
+            
+        }
+        $folder = 0;
+        if ( isset($_POST['folder']) ) $folder = 1;
+        $sourceDoc->set('isfolder', $folder);
+
+        /* Content with tags closed up again */
+        $content = str_replace('[ [', '[[', $_POST['formcontent']);
+        $sourceDoc->set('content', $content);
+
+        /* Save it */
+        $success = $sourceDoc->save();
+        if ( $success === false ) {
+           $this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('cantsave'));
+           return;
+        }
+
+        /* Clear the cache */
+        $this->_clearCache($sourceDoc);
+
+        /* Redirect to ourselves to redraw the page */
+        $params = array( 'frontpage'=> '1',
+                         'source' => $source,
+                         'parent' => '-1');
+        $url = $this->modx->makeURL($docId, "", $params);
+        $this->modx->sendRedirect($url);
+    }
+    
+    /**
+     * Clear the cache function
+     *
+     * @param $resource the resource we are using
+     * 
+     * @access private
+     *
+     */
+    private function _clearCache($resource) {
+    
+        
+        $cacheManager= $this->modx->getCacheManager();
+        $this->modx->getVersionData();
+        if (version_compare($this->modx->version['full_version'], '2.1.0-rc1', '<=')) {
+    
+            $cacheManager->clearCache(array (
+                    "{$resource->context_key}/resources/",
+                    "{$resource->context_key}/context.cache.php",
+                ),
+                array(
+                    'objects' => array('modResource', 'modContext', 'modTemplateVarResource'),
+                    'publishing' => true
+                )
+            );
+            
+        } else {
+            
+            $this->modx->cacheManager->refresh(array(
+                'db' => array(),
+                'auto_publish' => array('contexts' => array($resource->get('context_key'))),
+                'context_settings' => array('contexts' => array($resource->get('context_key'))),
+                'resource' => array('contexts' => array($resource->get('context_key'))),
+            ));
+            
+        }
+                          
+    }
+    
+    /**
+     * Create AJAX redirect page function
+     *
+     * @param $source the page id we are editing
+     * 
+     * @access public
+     *
+     */
+    function ajaxCreateRedirect() {
+        
+        $url = $this->modx->makeURL($_SESSION['fp_newCreate']);
+        return $url;
+    }
+    
 }

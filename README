@@ -1,0 +1,8 @@
+Version 1.1.0-beta
+-------------------
+
+Tickets addressed :- 14,13,10,9,8,7,6,1
+
+Frontpage now clears the cache on edit/create operation and refreshes
+or redirects to the edite/created page so changes can be seen in the front end immediately.
+

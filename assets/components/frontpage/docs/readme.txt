@@ -2,6 +2,7 @@ MODx Revolution Frontpage editor plugin
 
 Packaged for MODx Revolution 
 S. Hamblett steve.hamblett@linux.com Nov 2010
+Updated : May 2011
 
 This package contains a plugin that allows front end editing in
 MODx Revolution. It implements a cross between the MODx Evolution

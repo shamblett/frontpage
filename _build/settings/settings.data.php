@@ -37,6 +37,17 @@ unset($datasetting);
 
 $datasetting = $modx->newObject('modSystemSetting');
 $datasetting->fromArray(array(
+				'key' => 'ajax_resource',
+				'value' => 0,
+				'xtype' => 'textfield',
+				'namespace' => 'frontpage',
+				'area' => 'Frontpage'
+				), '', true, true);
+$settings[] = $datasetting;
+unset($datasetting);
+
+$datasetting = $modx->newObject('modSystemSetting');
+$datasetting->fromArray(array(
 				'key' => 'default_template',
 				'value' => "parent",
 				'xtype' => 'textfield',

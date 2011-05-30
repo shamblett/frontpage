@@ -7,95 +7,23 @@
  * @license   GPLv3 http://www.gnu.org/licenses/gpl.html
  */
 
+/* Create a Frontpage class */
+$corePath = $modx->getOption('frontpage.core_path',null,$modx->getOption('core_path').'components/frontpage/');
+include_once $corePath . "model/frontpage/frontpage.class.php";
+$fp = new Frontpage($modx);
+$fp->initialize($scriptProperties);
 
-/* Load the lexicon */
-$modx->lexicon->load('frontpage:default');
+/* Exit if we have not been invoked from frontpage itself */
+if ( $_REQUEST['frontpage'] != 1 ) return;
 
-/* Check if we have entered from the save button */
+/* Get the parameters */
+$source = $_REQUEST['source'];;
+
+/* Select the correct method*/
 if ( isset($_POST['save'])) {
-
-$docId = $modx->documentIdentifier;
-
-/* Ok, save the document fields */
-$source = $_POST['source'];
-$sourceDoc = $modx->getObject('modResource',
-                              array('id' => $source));
-if ( !$sourceDoc ) {
-
-   $modx->setPlaceholder('fp.error_message', $modx->lexicon('nosuchdocument'));
-   return;
+   $fp->saveEditPage($source);
+} else {
+   $fp->editPage($source);
 }
-
-$sourceDoc->set('pagetitle', $_POST['title']);
-$sourceDoc->set('longtitle', $_POST['longtitle']);
-$sourceDoc->set('description', $_POST['description']);
-$sourceDoc->set('alias', $_POST['alias']);
-$sourceDoc->set('introtext', $_POST['summary']);
-$sourceDoc->set('menutitle', $_POST['menutitle']);
-$sourceDoc->set('menuindex', $_POST['menuindex']);
-$hidemenu = 0;
-if ( isset($_POST['hidemenus']) ) $hidemenu = 1;
-$sourceDoc->set('hidemenu', $hidemenu);
-$publish = 0;
-if ( isset($_POST['publish']) ) $publish = 1;
-$sourceDoc->set('published', $publish);
-
-/* Content with tags closed up again */
-$content = str_replace('[ [', '[[', $_POST['formcontent']);
-$sourceDoc->set('content', $content);
-
-/* Save it */
-$success = $sourceDoc->save();
-if ( $success === false ) {
-   $modx->setPlaceholder('fp.error_message', $modx->lexicon('cantsave'));
-   return;
-}
-
-/* Redirect to ourselves to redraw the page */
-$url = $modx->makeURL($docId);
-$url .= "&frontpage=1&source=$source";
-$modx->sendRedirect($url);
-
-}
-
-/* Call from the Edit button, get the parameters */
-$source = $_REQUEST['source'];
-
-/* Get the document details */
-$sourceDoc = $modx->getObject('modResource',
-                              array('id' => $source));
-
-if ( !$sourceDoc) {
-
-   $modx->setPlaceholder('fp.error_message', $modx->lexicon('nosuchdocument'));
-   return;
-
-}
-
-/* Set the place holders */
-$modx->setPlaceholder('fp.source', $source);
-$modx->setPlaceholder('fp.titlelabel', $modx->lexicon('titlelabel'));
-$modx->setPlaceholder('fp.title', $sourceDoc->get('pagetitle'));
-$modx->setPlaceholder('fp.longtitlelabel', $modx->lexicon('longtitlelabel'));
-$modx->setPlaceholder('fp.longtitle', $sourceDoc->get('longtitle'));
-$modx->setPlaceholder('fp.descriptionlabel', $modx->lexicon('descriptionlabel'));
-$modx->setPlaceholder('fp.description', $sourceDoc->get('description'));
-$modx->setPlaceholder('fp.aliaslabel', $modx->lexicon('aliaslabel'));
-$modx->setPlaceholder('fp.alias', $sourceDoc->get('alias'));
-$modx->setPlaceholder('fp.summarylabel', $modx->lexicon('summarylabel'));
-$modx->setPlaceholder('fp.summary', $sourceDoc->get('introtext'));
-$modx->setPlaceholder('fp.menutitlelabel', $modx->lexicon('menutitlelabel'));
-$modx->setPlaceholder('fp.menutitle', $sourceDoc->get('menutitle'));
-$modx->setPlaceholder('fp.menuindexlabel', $modx->lexicon('menuindexlabel'));
-$modx->setPlaceholder('fp.menuindex', $sourceDoc->get('menuindex'));
-$modx->setPlaceholder('fp.hidemenulabel', $modx->lexicon('hidemenulabel'));
-if ( $sourceDoc->get('hidemenu') == 1 ) $modx->setPlaceholder('fp.hidemenuscheck', "checked");
-$modx->setPlaceholder('fp.publishlabel', $modx->lexicon('publishlabel'));
-if ( $sourceDoc->get('published') == 1 ) $modx->setPlaceholder('fp.publishcheck', "checked");
-$modx->setPlaceholder('fp.savebuttonlabel', $modx->lexicon('savebuttonlabel'));
-
-/* Content with tags opened */
-$content = str_replace('[[', '[ [', $sourceDoc->get('content'));
-$modx->setPlaceholder('fp.formcontent', $content);
 
 return;

@@ -37,9 +37,16 @@
 
 .fpEdit span
 {
-    background: transparent url(images/save.png) no-repeat left center;
+    background: transparent url(images/drop-yes.gif) no-repeat left center;
     padding-left: 20px;
 }
+
+.fpCreate span
+{
+    background: transparent url(images/drop-add.gif) no-repeat left center;
+    padding-left: 20px;
+}
+
 
 #fpEditorClosed
 {

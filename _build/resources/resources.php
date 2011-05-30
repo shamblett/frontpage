@@ -84,3 +84,28 @@ $r->set('template',0);
 
 $resources[] = $r;
 unset($r);
+
+/* AJAX */
+$r = $modx->newObject('modResource');
+$r->set('class_key','modDocument');
+$r->set('context_key','web');
+$r->set('type','document');
+$r->set('contentType','text/plain');
+$r->set('pagetitle','Frontpage AJAX');
+$r->set('longtitle','Frontpage Editor AJAX Resource');
+$r->set('alias','ajax');
+$r->set('published','1');
+$r->set('parent','0');
+$r->set('isfolder','0');
+$r->setContent(file_get_contents($sources['resources'] . 'ajax.html'));
+$r->set('richtext','0');
+$r->set('menuindex','0');
+$r->set('searchable','0');
+$r->set('cacheable','0');
+$r->set('donthit','0');
+$r->set('menutitle', '');
+$r->set('hidemenu','1');
+$r->set('template',0);
+
+$resources[] = $r;
+unset($r);
