@@ -1,5 +1,12 @@
+Version 1.2.0-beta
+---------------------------
+
+Tickets addressed :- 2
+
+The user can now specify a parent on resource create.
+
 Version 1.1.0-beta
--------------------
+---------------------------
 
 Tickets addressed :- 14,13,10,9,8,7,6,1
 

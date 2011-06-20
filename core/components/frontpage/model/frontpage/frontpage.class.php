@@ -514,110 +514,111 @@ class Frontpage {
         /* If parent is not -1 this is a create, otherwise a refresh from save */
         if ( $parent != -1 ) {
 
-        /* Create a document */
-        $newDoc = $this->modx->newObject('modResource');
+			/* Create a document */
+			$newDoc = $this->modx->newObject('modResource');
 
-        if ( !$newDoc ) {
+			if ( !$newDoc ) {
 
-           $this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('cantcreate'));
-           return;
-        }
+				$this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('cantcreate'));
+				return;
+			}
 
-        /* Get the parent document template */
-        $templateToUse = 0;
+			/* Get the parent document template */
+			$templateToUse = 0;
 
-        if ( $parent != 0 ) {
+			if ( $parent != 0 ) {
 
-        $parentDoc = $this->modx->getObject('modResource', array('id' => $parent));
-        if ( !$parentDoc ) {
+				$parentDoc = $this->modx->getObject('modResource', array('id' => $parent));
+				if ( !$parentDoc ) {
 
-           $this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('cantgetparent'));
-           return;
-        }
+					$this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('cantgetparent'));
+					return;
+				}
 
-        $templateToUse = $parentDoc->get('template');
+				$templateToUse = $parentDoc->get('template');
 
-        }
+			}
 
-        /* Set default document parameters from the parent */
-        if ( $parent != 0 ) {
+			/* Set default document parameters from the parent */
+			if ( $parent != 0 ) {
 
-          $newDoc->set('context_key', $parentDoc->get('context_key'));
-          $newDoc->set('richtext', $parentDoc->get('richtext'));
+				$newDoc->set('context_key', $parentDoc->get('context_key'));
+				$newDoc->set('richtext', $parentDoc->get('richtext'));
 
-        } else {
+			} else {
 
-           $newDoc->set('context_key', 'web');
+				$newDoc->set('context_key', 'web');
 
-        }
+			}
 
-        /* Get the kind of template we are using */
-        $templateSetting = $this->modx->getObject('modSystemSetting',
+			/* Get the kind of template we are using */
+			$templateSetting = $this->modx->getObject('modSystemSetting',
                                             array('key' => 'default_template',
                                             'namespace' => 'frontpage'));
-        if ( !$templateSetting ) {
+			if ( !$templateSetting ) {
 
-            $newDoc->set('template', $templateToUse);
+				$newDoc->set('template', $templateToUse);
 
-        } else {
+			} else {
 
-           $template = $templateSetting->get('value');
-           if ( $template == 'parent' ) {
+				$template = $templateSetting->get('value');
+				if ( $template == 'parent' ) {
 
-               $newDoc->set('template', $templateToUse);
+				$newDoc->set('template', $templateToUse);
 
-            } else {
+				} else {
 
-               $newDoc->set('template', $template);
-            }
+				$newDoc->set('template', $template);
+				}
 
-        }
+			}
 
-        /* Parent */
-        $newDoc->set('parent', $parent);
+			/* Parent */
+			$newDoc->set('parent', $parent);
 
-        /* Save the new document */
-        $success = $newDoc->save();
-        if ( $success === false ) {
+			/* Save the new document */
+			$success = $newDoc->save();
+			if ( $success === false ) {
 
-           $this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('cantsave'));
-           return;
-        }
-        
-        /* Resource groups */
-        if ( $parent != 0 ) {
+				$this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('cantsave'));
+				return;
+			
+			}
+			
+			 /* Resource groups */
+			if ( $parent != 0 ) {
 
-        $parentResourceGroups = $this->modx->getCollection('modResourceGroupResource',
-                                array('document' => $parent));
+				$parentResourceGroups = $this->modx->getCollection('modResourceGroupResource',
+										array('document' => $parent));
 
-        foreach ( $parentResourceGroups as $parentResourceGroup ) {
+				foreach ( $parentResourceGroups as $parentResourceGroup ) {
 
-             $resourceGroup = $parentResourceGroup->get('document_group');
-             $newResourceGroup = $this->modx->newObject('modResourceGroupResource',
-                                                   array('document' => $newDoc->get('id'),
+					$resourceGroup = $parentResourceGroup->get('document_group');
+					$newResourceGroup = $this->modx->newObject('modResourceGroupResource',
+														array('document' => $newDoc->get('id'),
                                                          'document_group' => $resourceGroup));
-             $newResourceGroup->save();
-        }
+					$newResourceGroup->save();
+				
+				}
 
-        }
+			}
 
-        /* Set the source document to the new one */
-        $source = $newDoc->get('id');
-        $sourceDoc = $newDoc;
+			/* Set the source document to the new one */
+			$source = $newDoc->get('id');
+			$sourceDoc = $newDoc;
         
-        /* Set the newly created document as a session variable */
-        $_SESSION['fp_newCreate'] = $source;
+			/* Set the newly created document as a session variable */
+			$_SESSION['fp_newCreate'] = $source;
         
-
         } else {
 
-        $sourceDoc = $this->modx->getObject('modResource',
+			$sourceDoc = $this->modx->getObject('modResource',
                                       array('id' => $source));
-        if ( !$sourceDoc ) {
+			if ( !$sourceDoc ) {
 
-           $this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('nosuchdocument'));
-           return;
-        }
+				$this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('nosuchdocument'));
+				return;
+			}
 
         } // Create or refresh
 
@@ -638,6 +639,7 @@ class Frontpage {
         $this->modx->setPlaceholder('fp.menuindexlabel', $this->modx->lexicon('menuindexlabel'));
         $this->modx->setPlaceholder('fp.menuindex', $sourceDoc->get('menuindex'));
         $this->modx->setPlaceholder('fp.hidemenulabel', $this->modx->lexicon('hidemenulabel'));
+        $this->modx->setPlaceholder('fp.createparentlabel', $this->modx->lexicon('createparentlabel'));
         if ( $sourceDoc->get('hidemenu') == 1 ) $this->modx->setPlaceholder('fp.hidemenuscheck', "checked");
         $this->modx->setPlaceholder('fp.publishlabel', $this->modx->lexicon('publishlabel'));
         if ( $sourceDoc->get('published') == 1 ) $this->modx->setPlaceholder('fp.publishcheck', "checked");
@@ -732,6 +734,8 @@ class Frontpage {
      */
     function saveCreatePage($source) {
         
+        $parentChanged = false;
+        
         $docId = $this->modx->resource->get('id');
 
         /* Ok, save the document fields */
@@ -742,7 +746,118 @@ class Frontpage {
            $this->modx->setPlaceholder('fp.error_message', $this->modx->lexicon('nosuchdocument'));
            return;
         }
+	
+		/*  If the user has specified a create parent process this */
+		if ( $_POST['createparent'] != "" ) {
+			
+			$createParent = $_POST['createparent'] ;
+			
+			/* Check for an alias and get the id */
+			if ( !is_numeric($createParent)) {  
+			
+				$isContainer = false;
+                $parentDoc = $this->modx->getObject('modResource',
+                                      array('alias' => $createParent));
+                if ( $parentDoc ) {
+                
+                    $isContainer = $parentDoc->get('isfolder');   
+                    
+                    /* If a container add the container suffix */
+                    if ( $isContainer ) {
+                
+                        $createParent .= $this->modx->getOption('container_suffix',
+                                                            null,
+                                                            '/');
+                    } else {
+                        
+                        /* Get the parent resources content type */
+                        $parentType = $parentDoc->get('contentType'); 
+                        $parentContentType = $this->modx->getObject('modContentType',
+                                                                    array( 'mime_type' => 
+                                                                        $parentType));
+                        if ( $parentContentType ) {
+                            
+                            $suffix = $parentContentType->get('file_extensions');
+                            
+                        } else {
+                            
+                            /* Default it */
+                            $suffix = '.html';
+                        }
+                        
+                        $createParent .= $suffix;
+                    }
+                
+                    $createParent = $this->modx->aliasMap[$createParent];
+                    
+                }
+			}
+			
+		}
+			
+		/* Validity check */
+		if ( is_numeric($createParent) ) {
+				
+			/* Check for parent changed, update the resource */
+			$parent = $sourceDoc->get('parent');
+			if ( $parent != $createParent ) {
+				
+				/* Get the parent resource and set up our document from it */
+				$parentDoc = $this->modx->getObject('modResource', array( 'id' => $createParent ) );
+				if ( $parentDoc ) {
+				
+					$parentDocId = $parentDoc->get('id');
+					$parentTemplate = $parentDoc->get('template');
+					$sourceDoc->set('parent', $parentDocId);
+				
+					/* Template */
+					$templateSetting = $this->modx->getObject('modSystemSetting',
+                                            array('key' => 'default_template',
+                                            'namespace' => 'frontpage'));
+                                            
+					if ( $templateSetting ) {
 
+						$template = $templateSetting->get('value');
+						if ( $template == 'parent' ) {
+
+							$sourceDoc->set('template', $parentTemplate);
+
+						} 
+
+					}
+                    
+                    /* If its not a container, it is now */
+                    $isContainer = false;
+                    $isContainer = $parentDoc->get('isfolder');   
+                    if ( !$isContainer ) {
+                        
+                        $parentDoc->set('isfolder', 1);
+                        $parentDoc->save();
+                    }
+				
+				}
+				
+				/* Delete any existing resource groups */
+				$this->modx->removeCollection('modResourceGroupResource',
+										array('document' => $parent));
+				
+				/* Create the new ones */
+				$parentResourceGroups = $this->modx->getCollection('modResourceGroupResource',
+										array('document' => $createParent));
+
+				foreach ( $parentResourceGroups as $parentResourceGroup ) {
+
+					$resourceGroup = $parentResourceGroup->get('document_group');
+					$newResourceGroup = $this->modx->newObject('modResourceGroupResource',
+														array('document' => $sourceDoc->get('id'),
+                                                         'document_group' => $resourceGroup));
+					$newResourceGroup->save();
+				
+				}
+		
+			}
+		}
+			
         $sourceDoc->set('pagetitle', $_POST['title']);
         $sourceDoc->set('longtitle', $_POST['longtitle']);
         $sourceDoc->set('description', $_POST['description']);

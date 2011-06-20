@@ -31,4 +31,5 @@ $_lang['publishlabel'] = 'Publish';
 $_lang['folderlabel'] = 'Folder';
 $_lang['savebuttonlabel'] = 'Save';
 $_lang['cancelbuttonlabel'] = 'Complete';
+$_lang['createparentlabel'] = 'Create as child of:';
 

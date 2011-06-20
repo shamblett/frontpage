@@ -35,9 +35,13 @@ switch($options[xPDOTransport::PACKAGE_ACTION]) {
 			$pluginEvent->set('propertyset', 0);
 			$success= $pluginEvent->save();
 			if ( $success === false ) {
-				$modx->log(xPDO::LOG_LEVEL_ERROR,'Cannot link plugin to event');
-				$success = false;
-				break;
+				
+				/* Only fail if this is a new installation, not an upgrade */
+				if ( $options[xPDOTransport::PACKAGE_ACTION] == xPDOTransport::ACTION_INSTALL ) {
+					$modx->log(xPDO::LOG_LEVEL_ERROR,'Cannot link plugin to event');
+					$success = false;
+					break;
+				}
 			}  
 				
             /* Set the system settings from the created resource id's */

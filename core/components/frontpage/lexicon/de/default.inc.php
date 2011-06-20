@@ -28,3 +28,4 @@ $_lang['hidemenulabel'] = 'Nicht in Menüs anzeigen';
 $_lang['publishlabel'] = 'Veröffentlicht';
 $_lang['folderlabel'] = 'Ordner';
 $_lang['savebuttonlabel'] = 'Speichern';
+$_lang['createparentlabel'] = 'Schaffen Sie als Kind dessen:';

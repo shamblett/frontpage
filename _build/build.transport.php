@@ -41,7 +41,7 @@ $modx->setLogLevel(modX::LOG_LEVEL_INFO);
 $modx->setLogTarget('ECHO');
 
 $name = 'frontpage';
-$version = '1.1.0';
+$version = '1.2.0';
 $release = 'beta';
 
 $modx->loadClass('transport.modPackageBuilder','',false, true);

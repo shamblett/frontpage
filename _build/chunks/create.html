@@ -29,7 +29,11 @@
     <p class="label_field_pair">
     <label for="menuindex">[[+fp.menuindexlabel]]</label>
     <input type="text" name="menuindex" id="menuindex" value="[[+fp.menuindex]]" class="textnarrow" maxlength="3" size="3"/></br>
-    </p></br>
+    </p>
+ <p class="label_field_pair">
+    <label for="createparent">[[+fp.createparentlabel]]</label>
+    <input type="text" name="createparent" id="createparent" value="[[+fp.createparent]]" class="text" maxlength="40" size="40"/>
+</p></br></br>
     <p class="label_checkbox_pair">
     <label for="hidemenus">[[+fp.hidemenulabel]]</label>
     <input type="checkbox" name="hidemenus" id="hidemenus" value="[[+fp.hidemenus]]" class="text" [[+fp.hidemenuscheck]] />       </p>
@@ -40,7 +44,7 @@
     <p class="label_checkbox_pair">
     <label for="folder">[[+fp.folderlabel]]</label>
     <input type="checkbox" name="folder" id="folder" value="[[+fp.folder]]" class="text" [[+fp.foldercheck]] /></br>
-    </p>
+    </p></br>
 <textarea id="formcontent" name="formcontent" class="tinymce">[[+fp.formcontent]]</textarea>
 <!-- Some tinymce integration calls -->
 	<a href="javascript:;" onmousedown="$('#formcontent').tinymce().show();">[Show]</a>
