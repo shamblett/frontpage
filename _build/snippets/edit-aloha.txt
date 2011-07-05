@@ -1,0 +1,25 @@
+<?php
+/**
+ * Frontpage Editor Edit Aloha snippet
+ *
+ * @author    S. Hamblett <steve.hamblett@linux.com>
+ * @copyright 2011 S. Hamblett
+ * @license   GPLv3 http://www.gnu.org/licenses/gpl.html
+ */
+
+/* Create a Frontpage class */
+$corePath = $modx->getOption('frontpage.core_path',null,$modx->getOption('core_path').'components/frontpage/');
+include_once $corePath . "model/frontpage/frontpage.class.php";
+$fp = new Frontpage($modx);
+$fp->initialize($scriptProperties);
+
+/* Exit if we have not been invoked from frontpage itself */
+if ( $_REQUEST['frontpage'] != 1 ) return;
+
+/* Get the parameters */
+$source = $_REQUEST['source'];;
+
+/* Invoke the class method*/
+$fp->editPageAloha($source);
+
+return;

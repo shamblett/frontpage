@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Settings data script
  *
@@ -8,52 +9,83 @@
  * @copyright 2010 S. Hamblett
  * @license   GPLv3 http://www.gnu.org/licenses/gpl.html
  * @link      none
- **/
-
-				
+ * */
 /* System Settings */
 
 $datasetting = $modx->newObject('modSystemSetting');
 $datasetting->fromArray(array(
-				'key' => 'edit_resource',
-				'value' => 0,
-				'xtype' => 'textfield',
-				'namespace' => 'frontpage',
-				'area' => 'Frontpage'
-				), '', true, true);
+    'key' => 'edit_resource',
+    'value' => 0,
+    'xtype' => 'textfield',
+    'namespace' => 'frontpage',
+    'area' => 'Frontpage'
+        ), '', true, true);
 $settings[] = $datasetting;
 unset($datasetting);
 
 $datasetting = $modx->newObject('modSystemSetting');
 $datasetting->fromArray(array(
-				'key' => 'create_resource',
-				'value' => "0",
-				'xtype' => 'textfield',
-				'namespace' => 'frontpage',
-				'area' => 'Frontpage'
-				), '', true, true);
+    'key' => 'create_resource',
+    'value' => "0",
+    'xtype' => 'textfield',
+    'namespace' => 'frontpage',
+    'area' => 'Frontpage'
+        ), '', true, true);
 $settings[] = $datasetting;
 unset($datasetting);
 
 $datasetting = $modx->newObject('modSystemSetting');
 $datasetting->fromArray(array(
-				'key' => 'ajax_resource',
-				'value' => 0,
-				'xtype' => 'textfield',
-				'namespace' => 'frontpage',
-				'area' => 'Frontpage'
-				), '', true, true);
+    'key' => 'edit_resource-aloha',
+    'value' => 0,
+    'xtype' => 'textfield',
+    'namespace' => 'frontpage',
+    'area' => 'Frontpage'
+        ), '', true, true);
 $settings[] = $datasetting;
 unset($datasetting);
 
 $datasetting = $modx->newObject('modSystemSetting');
 $datasetting->fromArray(array(
-				'key' => 'default_template',
-				'value' => "parent",
-				'xtype' => 'textfield',
-				'namespace' => 'frontpage',
-				'area' => 'Frontpage'
-				), '', true, true);
+    'key' => 'create_resource-aloha',
+    'value' => "0",
+    'xtype' => 'textfield',
+    'namespace' => 'frontpage',
+    'area' => 'Frontpage'
+        ), '', true, true);
+$settings[] = $datasetting;
+unset($datasetting);
+
+$datasetting = $modx->newObject('modSystemSetting');
+$datasetting->fromArray(array(
+    'key' => 'ajax_resource',
+    'value' => 0,
+    'xtype' => 'textfield',
+    'namespace' => 'frontpage',
+    'area' => 'Frontpage'
+        ), '', true, true);
+$settings[] = $datasetting;
+unset($datasetting);
+
+$datasetting = $modx->newObject('modSystemSetting');
+$datasetting->fromArray(array(
+    'key' => 'ajax_resource-aloha',
+    'value' => 0,
+    'xtype' => 'textfield',
+    'namespace' => 'frontpage',
+    'area' => 'Frontpage'
+        ), '', true, true);
+$settings[] = $datasetting;
+unset($datasetting);
+
+$datasetting = $modx->newObject('modSystemSetting');
+$datasetting->fromArray(array(
+    'key' => 'default_template',
+    'value' => "parent",
+    'xtype' => 'textfield',
+    'namespace' => 'frontpage',
+    'area' => 'Frontpage'
+        ), '', true, true);
 
 $settings[] = $datasetting;
 

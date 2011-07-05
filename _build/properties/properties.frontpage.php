@@ -76,6 +76,20 @@ $properties = array(
         'type' => 'textfield',
         'options' => '',
         'value' => 'https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js',
+    ),
+    array(
+        'name' => 'editMethod',
+        'desc' => 'Frontpage edit/create method',
+        'type' => 'textfield',
+        'options' => '',
+        'value' => 'classic',
+    ),
+    array(
+        'name' => 'activeAloha',
+        'desc' => 'Uas Aloha on marked up pages',
+        'type' => 'combo-boolean',
+        'options' => '',
+        'value' => 'false',
     ));
 
 

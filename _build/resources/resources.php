@@ -60,6 +60,33 @@ $r->set('template',0);
 $resources[] = $r;
 unset($r);
 
+/* Create Aloha*/
+$r = $modx->newObject('modResource');
+$r->set('class_key','modDocument');
+$r->set('context_key','web');
+$r->set('type','document');
+$r->set('contentType','text/html');
+$r->set('pagetitle','Frontpage Create Aloha');
+$r->set('longtitle','Frontpage Editor Aloha Create Resource');
+$r->set('description','');
+$r->set('alias','create-aloha');
+$r->set('published','1');
+$r->set('parent','0');
+$r->set('isfolder','0');
+$r->set('introtext', '');
+$r->setContent(file_get_contents($sources['resources'] . 'create-aloha.html'));
+$r->set('richtext','0');
+$r->set('menuindex','0');
+$r->set('searchable','0');
+$r->set('cacheable','0');
+$r->set('donthit','0');
+$r->set('menutitle', '');
+$r->set('hidemenu','1');
+$r->set('template',0);
+
+$resources[] = $r;
+unset($r);
+
 /* Edit */
 $r = $modx->newObject('modResource');
 $r->set('class_key','modDocument');
@@ -85,6 +112,31 @@ $r->set('template',0);
 $resources[] = $r;
 unset($r);
 
+/* Edit Aloha */
+$r = $modx->newObject('modResource');
+$r->set('class_key','modDocument');
+$r->set('context_key','web');
+$r->set('type','document');
+$r->set('contentType','text/html');
+$r->set('pagetitle','Frontpage Edit Aloha');
+$r->set('longtitle','Frontpage Editor Aloha Edit Resource');
+$r->set('alias','edit-aloha');
+$r->set('published','1');
+$r->set('parent','0');
+$r->set('isfolder','0');
+$r->setContent(file_get_contents($sources['resources'] . 'edit-aloha.html'));
+$r->set('richtext','0');
+$r->set('menuindex','0');
+$r->set('searchable','0');
+$r->set('cacheable','0');
+$r->set('donthit','0');
+$r->set('menutitle', '');
+$r->set('hidemenu','1');
+$r->set('template',0);
+
+$resources[] = $r;
+unset($r);
+
 /* AJAX */
 $r = $modx->newObject('modResource');
 $r->set('class_key','modDocument');
@@ -98,6 +150,31 @@ $r->set('published','1');
 $r->set('parent','0');
 $r->set('isfolder','0');
 $r->setContent(file_get_contents($sources['resources'] . 'ajax.html'));
+$r->set('richtext','0');
+$r->set('menuindex','0');
+$r->set('searchable','0');
+$r->set('cacheable','0');
+$r->set('donthit','0');
+$r->set('menutitle', '');
+$r->set('hidemenu','1');
+$r->set('template',0);
+
+$resources[] = $r;
+unset($r);
+
+/* AJAX Aloha */
+$r = $modx->newObject('modResource');
+$r->set('class_key','modDocument');
+$r->set('context_key','web');
+$r->set('type','document');
+$r->set('contentType','text/plain');
+$r->set('pagetitle','Frontpage AJAX Aloha');
+$r->set('longtitle','Frontpage Editor Aloha AJAX Resource');
+$r->set('alias','ajax-aloha');
+$r->set('published','1');
+$r->set('parent','0');
+$r->set('isfolder','0');
+$r->setContent(file_get_contents($sources['resources'] . 'ajax-aloha.html'));
 $r->set('richtext','0');
 $r->set('menuindex','0');
 $r->set('searchable','0');
