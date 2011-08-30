@@ -23,6 +23,7 @@ $sources = array(
     'events' => 'plugins/events/',
     'properties' => 'properties/',
     'resolvers' => 'resolvers/',
+    'validators' => 'validators/',
     'settings' => 'settings/',
     'resources' => 'resources/',
     'source_core' => $base . '/core/components/frontpage',
@@ -41,7 +42,7 @@ $modx->setLogLevel(modX::LOG_LEVEL_INFO);
 $modx->setLogTarget('ECHO');
 
 $name = 'frontpage';
-$version = '1.3.0';
+$version = '1.4.0';
 $release = 'beta';
 
 $modx->loadClass('transport.modPackageBuilder', '', false, true);
@@ -70,8 +71,8 @@ $attr = array(
         xPDOTransport::RELATED_OBJECTS => true,
         xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array(
             'modPluginEvent' => array(
-                xPDOTransport::PRESERVE_KEYS => true,
-                xPDOTransport::UPDATE_OBJECT => false,
+                xPDOTransport::PRESERVE_KEYS => false,
+                xPDOTransport::UPDATE_OBJECT => true,
                 xPDOTransport::UNIQUE_KEY => array('pluginid', 'event'),
         )),
         'modSnippet' => array(
@@ -146,6 +147,11 @@ $vehicle->resolve('file', array(
     'source' => $sources['source_core'],
     'target' => "return MODX_CORE_PATH . 'components/';"));
 
+/* Validators , on the last vehicle also */
+
+$vehicle->validate('php', array(
+    'type' => 'php',
+    'source' => $sources['validators'] . 'validator.php'));
 
 /* Add all the vehicles */
 foreach ($vehicles as $vehicle) {

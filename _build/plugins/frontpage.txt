@@ -8,7 +8,16 @@
  */
 
 /* Don't process anything if we have no logged in web user */
-if ( !$_SESSION['webValidated'] == 1 ) return;
+$modx->getVersionData();
+if (version_compare($modx->version['full_version'], '2.1.0-rc1', '<=')) {
+
+    if ( !$_SESSION['webValidated'] == 1 ) return;
+
+} else {
+
+    $authenticated = $modx->user->isAuthenticated($modx->context->get('key'));
+    if ( $authenticated != 1 ) return;
+}
 
 /* Create a Frontpage class */
 $corePath = $modx->getOption('frontpage.core_path',null,$modx->getOption('core_path').'components/frontpage/');

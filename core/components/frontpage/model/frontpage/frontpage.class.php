@@ -231,7 +231,7 @@ class Frontpage {
         }
 
         /* Insert jQuery in head if needed */
-        if ($this->config['loadJQuery'] == true)
+        if ($this->config['loadJQuery'] == 1 )
             $head .= '<script src="' . $this->config['jQueryPath'] . '" type="text/javascript"></script>';
 
         /* Toolbar */

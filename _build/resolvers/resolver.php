@@ -21,7 +21,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         /* Get the plugin id */
         $plugin = $modx->getObject('modPlugin', array('name' => 'Frontpage'));
         if (!$plugin) {
-            $modx->log(xPDO::LOG_LEVEL_ERROR, 'Cant get plugin ');
+            $modx->log(xPDO::LOG_LEVEL_ERROR, 'Cant get plugin on install ');
             $success = false;
             break;
         }
